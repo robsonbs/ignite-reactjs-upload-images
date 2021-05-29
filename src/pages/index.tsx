@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Button, Box } from '@chakra-ui/react';
 import { useMemo } from 'react';
+import { Button, Box } from '@chakra-ui/react';
 import { useInfiniteQuery } from 'react-query';
 
 import { Header } from '../components/Header';
@@ -18,13 +18,15 @@ type Image = {
 };
 
 type ImageResult = {
-  data: Image[];
-  after: string | null;
+  data: {
+    data: Image[];
+    after: string | null;
+  };
 };
 
 export default function Home(): JSX.Element {
-  const fetchImages = async ({ pageParam = null }): Promise<any> =>
-    api.get<ImageResult>('/api/images', {
+  const fetchImages = async ({ pageParam = null }): Promise<ImageResult> =>
+    api.get('/api/images', {
       params: { after: pageParam },
     });
   const {
@@ -35,7 +37,7 @@ export default function Home(): JSX.Element {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery('images', fetchImages, {
-    getNextPageParam: (result, pages) => result.data.after,
+    getNextPageParam: result => result.data.after,
   });
   const formattedData = useMemo(() => {
     return data?.pages.map(page => page.data.data).flat();

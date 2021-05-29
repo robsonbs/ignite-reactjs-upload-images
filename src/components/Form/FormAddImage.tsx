@@ -28,7 +28,7 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
       required: 'Arquivo obrigatório',
       validate: {
         lessThan10MB: v =>
-          v[0].size < 100000000 || `O arquivo deve ser menor que 10MB`,
+          v[0].size < 10485761 || `O arquivo deve ser menor que 10MB`,
         acceptedFormats: v =>
           /image\/(png|jpeg|gif)/.test(v[0].type) ||
           'Somente são aceitos arquivos PNG, JPEG e GIF',
@@ -71,9 +71,14 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
     }
   );
 
-  const { register, handleSubmit, reset, formState, setError, trigger } =
-    useForm();
-  const { errors } = formState;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+    setError,
+    trigger,
+  } = useForm();
 
   const handleSubmitImage: SubmitHandler<CreateImageFormData> = async data => {
     try {
@@ -130,8 +135,8 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
 
       <Button
         my={6}
-        isLoading={formState.isSubmitting}
-        isDisabled={formState.isSubmitting}
+        isLoading={isSubmitting}
+        isDisabled={isSubmitting}
         type="submit"
         w="100%"
         py={6}
